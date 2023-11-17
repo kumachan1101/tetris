@@ -13,14 +13,14 @@ let BLOCK_SIZE = 64;
 
 let MyBlockList = [];
 let StageList = [];
-let BlockPattenList = [Patten1, Patten2, Patten3, Patten4, Patten5];
+let BlockPattenList = [Patten1, Patten2, Patten3, Patten4, Patten5, Patten6];
 let StageMap = [];
 
 let canvas;
 let context;
 
 let pattern;
-let patternoffset = [Patten1Offset, Patten2Offset, Patten3Offset, Patten4Offset, Patten5Offset];
+let patternoffset = [Patten1Offset, Patten2Offset, Patten3Offset, Patten4Offset, Patten5Offset, Patten6Offset];
 let mode;
 
 let count = document.getElementById("count");
@@ -233,6 +233,52 @@ function Patten5Offset(){
     return array;
 }
 
+// ■
+// ■ ■ ■
+function Patten6(){
+    let array = [new Pos(0,0), new Pos(0,1), new Pos(1,1), new Pos(2,1)];
+    mode = 0;
+    return array;
+}
+
+// 1
+// 2 3 4
+//
+
+//   4
+//   3
+// 1 2
+
+//
+// 4 3 2
+//     1
+
+// 2 1
+// 3
+// 4 
+
+function Patten6Offset(){
+    let array;
+    switch(mode){
+        case 0:
+            array = [new Pos(0,2), new Pos(1,1), new Pos(0,0), new Pos(-1,-1)];
+            mode = 1;
+            break;
+        case 1:
+            array = [new Pos(2,0), new Pos(1,-1), new Pos(0,0), new Pos(-1,1)];
+            mode = 2;
+            break;
+        case 2:
+            array = [new Pos(-1,-2), new Pos(-2,-1), new Pos(-1,0), new Pos(0,1)];
+            mode = 3;
+            break;
+        case 3:
+            array = [new Pos(-1,0), new Pos(0,1), new Pos(1,0), new Pos(2,-1)];
+            mode = 0;
+            break;
+    }
+    return array;
+}
 
 function RandomPattern(){
     pattern = Math.floor(Math.random() * BlockPattenList.length);
