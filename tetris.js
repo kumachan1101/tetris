@@ -9,7 +9,7 @@ let KEY_DOWN = 40;
 
 let STAGE_WIDTH;
 let STAGE_HEIGHT;
-let BLOCK_SIZE = 64;
+let BLOCK_SIZE = 32;
 
 let MyBlockList = [];
 let StageList = [];
@@ -22,8 +22,8 @@ let context;
 let pattern;
 let patternoffset = [Patten1Offset, Patten2Offset, Patten3Offset, Patten4Offset, Patten5Offset, Patten6Offset];
 let mode;
-
-let count = document.getElementById("count");
+let count=0;
+let fontElement;
 
 document.onkeydown = function(e) {
 	var keyCode = false;
@@ -57,6 +57,9 @@ function init(){
     context = canvas.getContext('2d');
     STAGE_WIDTH = canvas.width / BLOCK_SIZE;
     STAGE_HEIGHT = canvas.height / BLOCK_SIZE;
+
+    let countElement = document.getElementById("count");
+    fontElement = countElement.querySelector('font');    
 
     // ステージ表示
     InitStage();
@@ -416,6 +419,7 @@ function DeleteLine(){
                 }
             }
             count++;
+            fontElement.textContent = count;
         }
     }  
 }
