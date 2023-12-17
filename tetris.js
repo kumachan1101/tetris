@@ -10,6 +10,7 @@ let KEY_DOWN = 40;
 let STAGE_WIDTH;
 let STAGE_HEIGHT;
 let BLOCK_SIZE = 32;
+let STAGE_INTERVAL = 2;
 
 let MyBlockList = [];
 let StageList = [];
@@ -24,6 +25,7 @@ let patternoffset = [Patten1Offset, Patten2Offset, Patten3Offset, Patten4Offset,
 let mode;
 let count=0;
 let fontElement;
+let cDBDataControl;
 
 document.onkeydown = function(e) {
 	var keyCode = false;
@@ -52,25 +54,7 @@ function Down(){
     return move(0,1);
 }
 
-function init(){
-    canvas = document.querySelector('#canvas');
-    context = canvas.getContext('2d');
-    STAGE_WIDTH = canvas.width / BLOCK_SIZE;
-    STAGE_HEIGHT = canvas.height / BLOCK_SIZE;
-
-    let countElement = document.getElementById("count");
-    fontElement = countElement.querySelector('font');    
-
-    // ステージ表示
-    InitStage();
-
-    // 初期ブロック表示
-    CreateBlock();
-    ShowBlock();
-}
-
 function InitStage(){
-
     StageList = new Array(STAGE_HEIGHT); // Y
     for (let i = 0; i < STAGE_HEIGHT; i++) {
         StageList[i] = new Array(STAGE_WIDTH); // X 
@@ -82,6 +66,26 @@ function InitStage(){
         }
     }
 }
+
+function init(){
+    canvas = document.querySelector('#canvas');
+    context = canvas.getContext('2d');
+    STAGE_WIDTH = ((canvas.width-STAGE_INTERVAL*BLOCK_SIZE)/2)/BLOCK_SIZE;
+    STAGE_HEIGHT = canvas.height / BLOCK_SIZE;
+
+    let countElement = document.getElementById("count");
+    fontElement = countElement.querySelector('font');    
+
+    // ステージ表示
+    InitStage();
+
+    // 初期ブロック表示
+    CreateBlock();
+    ShowBlock();
+    
+}
+
+
 
 
 //   ■ ■
@@ -302,17 +306,70 @@ function CreateBlock(){
 
 }
 
-function ShowBlock(){
+function ShowPlayer1(){
+    if(cDBDataControl == undefined){
+        return;
+    }
+    let offset;
+    if(cDBDataControl.cDBSetting.MyRoom == room1){
+        offset = cDBDataControl.cDBSetting.GetOffset_Player1();
+        ShowMyBlock(offset);
+    }
+    else{
+        offset = cDBDataControl.cDBSetting.GetOffset_Player2();
+        ShowPartnerBlock(offset);
+    }
+}
+
+function ShowPlayer2(){
+    if(cDBDataControl == undefined){
+        return;
+    }
+    let offset;
+    if(cDBDataControl.cDBSetting.MyRoom == room2){
+        offset = cDBDataControl.cDBSetting.GetOffset_Player1();
+        ShowMyBlock(offset);
+    }
+    else{
+        offset = cDBDataControl.cDBSetting.GetOffset_Player2();
+        ShowPartnerBlock(offset);
+    }
+}
+
+function ShowMyBlock(offset){
     for (let index = 0; index < MyBlockList.length; index++) {
-        DrawScreen(MyBlockList[index].x, MyBlockList[index].y); 
+        DrawScreen(MyBlockList[index].x+offset, MyBlockList[index].y); 
     }
     for (let y = 0; y < STAGE_HEIGHT; y++) {
         for (let x = 0; x < STAGE_WIDTH; x++) {
             if(StageList[y][x]){
-                DrawScreen(x,y);
+                DrawScreen(x+offset,y);
             }
         }
     }
+}
+
+function ShowPartnerBlock(offset){
+    if(cDBDataControl == undefined){
+        return;
+    }
+    if(cDBDataControl.DBPartnerStageList == undefined){
+        return;
+    }
+    for (let y = 0; y < STAGE_HEIGHT; y++) {
+        for (let x = 0; x < STAGE_WIDTH; x++) {
+            if(cDBDataControl.DBPartnerStageList[y][x]){
+                DrawScreen(x+offset,y);
+            }
+        }
+    }
+
+}
+
+
+function ShowBlock(){
+    ShowPlayer1();
+    ShowPlayer2();
 }
 
 function DrawScreen(x,y){
@@ -328,15 +385,34 @@ function AddStageBlock(){
     }
 }
 
+function CanStart(){
+    if(cDBDataControl == undefined || context == undefined){
+        return false;
+    }
+    const btn1 = document.getElementById(BTN_PLAYER1);
+    const btn2 = document.getElementById(BTN_PLAYER2);
+    if(btn1.disabled == true && btn2.disabled == true){
+        return true;
+    }
+    return false;
+}
+
 function loop(){
+    if(false == CanStart()){
+        return;
+    }
+
     context.fillStyle = "black";
-    context.fillRect(0, 0, STAGE_WIDTH * BLOCK_SIZE, STAGE_HEIGHT * BLOCK_SIZE)
+    context.fillRect(0, 0, STAGE_WIDTH * BLOCK_SIZE, STAGE_HEIGHT * BLOCK_SIZE);
+    context.fillRect(STAGE_WIDTH * BLOCK_SIZE + STAGE_INTERVAL * BLOCK_SIZE, 0,  STAGE_WIDTH * BLOCK_SIZE, STAGE_HEIGHT * BLOCK_SIZE);
+
     ShowBlock();
     if(false == Down()){
         AddStageBlock();
         CreateBlock();
     }
     DeleteLine();
+    cDBDataControl.update();
 }
 
 function keyaction(keycode){
@@ -435,5 +511,5 @@ function move(movex,movey){
     return true;
 }
 
-init();
+//init();
 setInterval(loop, 200);

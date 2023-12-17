@@ -1,10 +1,31 @@
 
 <!DOCTYPE html>
 <html lang="en">
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-database.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCiFNsJsXSTXjxB4RY2ABQJdSKXzkG-FzA",
+  authDomain: "tetris-4cb69.firebaseapp.com",
+  databaseURL: "https://tetris-4cb69-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tetris-4cb69",
+  storageBucket: "tetris-4cb69.appspot.com",
+  messagingSenderId: "57099315351",
+  appId: "1:57099315351:web:4b79e9dc6ca63a8882e1d2",
+  measurementId: "G-WL95LBWC1G"
+};
+
+firebase.initializeApp(firebaseConfig);
+</script>
 <body>
-    <!-- 32 * 40 → 1280、 32 * 20 → 640 -->
+    <!-- 32 * 40 → 640*2+100→1380、 32 * 20 → 640 -->
     <p id="count"><font size="7">0</font></p>
-    <canvas id="canvas" width="640"  height="1280"></canvas>
+    <canvas id="canvas" width="1344"  height="640"></canvas>
+    <button type="button" id="player1">player1</button>
+    <button type="button" id="player2">player2</button>
+    <button type="button" id="reset">reset</button>
+    <button type="button" id="start">start</button>
+    <script type="text/javascript" src=./database.js> </script>
     <script type="text/javascript" src=./tetris.js> </script>
 </body>
 </html>
